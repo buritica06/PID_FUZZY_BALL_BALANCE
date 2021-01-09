@@ -1,4 +1,4 @@
-
+%%This is written in matlab
 fuzzy_program = newfis('FuzzyProgram');
 
 %%Creacion de entrada
