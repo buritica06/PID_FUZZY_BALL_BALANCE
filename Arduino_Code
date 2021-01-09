@@ -1,0 +1,147 @@
+#include <Fuzzy.h>
+#include <Servo.h>
+Servo myservo;
+
+long int PuntoAjuste=15;
+const int Trigger = 44; 
+const int Echo = 45;
+int Marca_Er=0;
+
+Fuzzy *Balancin_Difuso = new Fuzzy();
+
+// FuzzyInput
+FuzzySet *Error_Max_Der = new FuzzySet(-30, -30, -30, -20);
+FuzzySet *Error_Med_Der = new FuzzySet(-22, -17, -17, -12);
+FuzzySet *Error_min_Der = new FuzzySet(-13, -8, -8, -0.25);
+FuzzySet *Error_Estable = new FuzzySet(-0.5, 0, 0, 0.5);
+FuzzySet *Error_min_Izq = new FuzzySet(0.25, 8, 8, 13);
+FuzzySet *Error_Med_Izq = new FuzzySet(12, 17, 17, 22);
+FuzzySet *Error_Max_Izq = new FuzzySet(20, 30, 30, 30);
+
+// FuzzyOutput
+FuzzySet *Subiendo = new FuzzySet(83, 83, 83, 90);
+FuzzySet *Subiendo_Med  = new FuzzySet(85, 95, 95, 105);
+FuzzySet *Subiendo_Min = new FuzzySet(95, 105, 105, 115);
+FuzzySet *Set_Point = new FuzzySet(131, 136, 136, 140);
+FuzzySet *Bajando_Min = new FuzzySet(143, 152, 152, 162.5);
+FuzzySet *Bajando_Med = new FuzzySet(149, 160, 160, 171);
+FuzzySet *Bajando_Full = new FuzzySet(162, 180, 180, 180);
+
+void setup() {  
+   
+   Serial.begin(9600);
+  
+   myservo.attach(10);
+  
+  // FuzzyInput
+  FuzzyInput *Error = new FuzzyInput(1);
+  Error->addFuzzySet(Error_Max_Der);
+  Error->addFuzzySet(Error_Med_Der);
+  Error->addFuzzySet(Error_min_Der);
+  Error->addFuzzySet(Error_Estable);
+  Error->addFuzzySet(Error_min_Izq);
+  Error->addFuzzySet(Error_Med_Izq);
+  Error->addFuzzySet(Error_Max_Izq);
+  Balancin_Difuso->addFuzzyInput(Error);  
+
+    // FuzzyOutput
+  FuzzyOutput *ServoM = new FuzzyOutput(1);
+  ServoM->addFuzzySet(Subiendo);
+  ServoM->addFuzzySet(Subiendo_Med );
+  ServoM->addFuzzySet(Subiendo_Min);
+  ServoM->addFuzzySet(Set_Point);
+  ServoM->addFuzzySet(Bajando_Min);
+  ServoM->addFuzzySet(Bajando_Med);
+  ServoM->addFuzzySet(Bajando_Full);
+  Balancin_Difuso->addFuzzyOutput(ServoM);
+
+//Regla 1
+FuzzyRuleAntecedent *ifErrorisError_Max_Der = new FuzzyRuleAntecedent();
+ifErrorisError_Max_Der->joinSingle(Error_Max_Der);
+FuzzyRuleConsequent *thenServoMSubiendo = new FuzzyRuleConsequent();
+thenServoMSubiendo->addOutput(Subiendo);
+FuzzyRule *fuzzyRule1 = new FuzzyRule(1, ifErrorisError_Max_Der, thenServoMSubiendo );
+Balancin_Difuso->addFuzzyRule(fuzzyRule1);
+
+//Regla 2
+FuzzyRuleAntecedent *ifErrorisError_Med_Der = new FuzzyRuleAntecedent();
+ifErrorisError_Med_Der->joinSingle(Error_Med_Der);
+FuzzyRuleConsequent *thenServoMSubiendo_Med  = new FuzzyRuleConsequent();
+thenServoMSubiendo_Med ->addOutput(Subiendo_Med );
+FuzzyRule *fuzzyRule2 = new FuzzyRule(2, ifErrorisError_Med_Der, thenServoMSubiendo_Med  );
+Balancin_Difuso->addFuzzyRule(fuzzyRule2);
+
+//Regla 3
+FuzzyRuleAntecedent *ifErrorisError_min_Der = new FuzzyRuleAntecedent();
+ifErrorisError_min_Der->joinSingle(Error_min_Der);
+FuzzyRuleConsequent *thenServoMSubiendo_Min = new FuzzyRuleConsequent();
+thenServoMSubiendo_Min->addOutput(Subiendo_Min);
+FuzzyRule *fuzzyRule3 = new FuzzyRule(3, ifErrorisError_min_Der, thenServoMSubiendo_Min );
+Balancin_Difuso->addFuzzyRule(fuzzyRule3);
+
+//Regla 4
+FuzzyRuleAntecedent *ifErrorisError_Estable = new FuzzyRuleAntecedent();
+ifErrorisError_Estable->joinSingle(Error_Estable);
+FuzzyRuleConsequent *thenServoMSet_Point = new FuzzyRuleConsequent();
+thenServoMSet_Point->addOutput(Set_Point);
+FuzzyRule *fuzzyRule4 = new FuzzyRule(4, ifErrorisError_Estable, thenServoMSet_Point );
+Balancin_Difuso->addFuzzyRule(fuzzyRule4);
+
+//Regla 5
+FuzzyRuleAntecedent *ifErrorisError_min_Izq = new FuzzyRuleAntecedent();
+ifErrorisError_min_Izq->joinSingle(Error_min_Izq);
+FuzzyRuleConsequent *thenServoMBajando_Min = new FuzzyRuleConsequent();
+thenServoMBajando_Min->addOutput(Bajando_Min);
+FuzzyRule *fuzzyRule5 = new FuzzyRule(5, ifErrorisError_min_Izq, thenServoMBajando_Min );
+Balancin_Difuso->addFuzzyRule(fuzzyRule5);
+
+//Regla 6
+FuzzyRuleAntecedent *ifErrorisError_Med_Izq = new FuzzyRuleAntecedent();
+ifErrorisError_Med_Izq->joinSingle(Error_Med_Izq);
+FuzzyRuleConsequent *thenServoMBajando_Med = new FuzzyRuleConsequent();
+thenServoMBajando_Med->addOutput(Bajando_Med);
+FuzzyRule *fuzzyRule6 = new FuzzyRule(6, ifErrorisError_Med_Izq, thenServoMBajando_Med );
+Balancin_Difuso->addFuzzyRule(fuzzyRule6);
+
+//Regla 7
+FuzzyRuleAntecedent *ifErrorisError_Max_Izq = new FuzzyRuleAntecedent();
+ifErrorisError_Max_Izq->joinSingle(Error_Max_Izq);
+FuzzyRuleConsequent *thenServoMBajando_Full = new FuzzyRuleConsequent();
+thenServoMBajando_Full->addOutput(Bajando_Full);
+FuzzyRule *fuzzyRule7 = new FuzzyRule(7, ifErrorisError_Max_Izq, thenServoMBajando_Full );
+Balancin_Difuso->addFuzzyRule(fuzzyRule7);
+
+  pinMode(Trigger, OUTPUT);
+  pinMode(Echo, INPUT); 
+  digitalWrite(Trigger, LOW);
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  long t; //timepo que demora en llegar el eco
+  long d; //distancia en centimetros
+  digitalWrite(Trigger,HIGH);
+  delayMicroseconds(10);          //Enviamos un pulso de 10us
+  digitalWrite(Trigger,LOW);
+  t = pulseIn(Echo,HIGH); //obtenemos el ancho del pulso
+  d = t/59;             //escalamos el tiempo a una distancia en cm
+  Serial.print("Distancia: ");
+  Serial.print(d);
+  Serial.print(" cms");
+  Serial.println();
+  Marca_Er=PuntoAjuste-d;
+  Serial.print("Error: ");
+  Serial.print(Marca_Er);
+  Serial.print(" cms");
+  Serial.println();
+  Balancin_Difuso->setInput(1, Marca_Er);
+  Balancin_Difuso->fuzzify();
+  float output1 = Balancin_Difuso->defuzzify(1);
+  Serial.print("Poscicion ffuzzy:  "); 
+  Serial.println(output1);
+  int angle=map(output1,70,180,70,180);
+  Serial.print("Poscicion:  "); 
+  Serial.println(angle);
+  myservo.write(angle);       
+}
