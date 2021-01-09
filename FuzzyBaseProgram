@@ -1,0 +1,78 @@
+
+fuzzy_program = newfis('FuzzyProgram');
+
+%%Creacion de entrada
+fuzzy_program.input(1).name = 'Error';
+fuzzy_program.input(1).range = [-30 30];
+fuzzy_program.input(1).mf(1).name = 'EMaxDer';
+fuzzy_program.input(1).mf(1).type = 'trimf';
+fuzzy_program.input(1).mf(1).params = [-30 -30 -20];
+
+fuzzy_program.input(1).mf(2).name = 'EMedDer';
+fuzzy_program.input(1).mf(2).type = 'trimf';
+fuzzy_program.input(1).mf(2).params = [-22 -17 12];
+
+fuzzy_program.input(1).mf(3).name = 'EminDer';
+fuzzy_program.input(1).mf(3).type = 'trimf';
+fuzzy_program.input(1).mf(3).params = [-13 -8 -0.25];
+
+fuzzy_program.input(1).mf(4).name = 'Error0';
+fuzzy_program.input(1).mf(4).type = 'trimf';
+fuzzy_program.input(1).mf(4).params = [-0.5 0 0.5];
+
+fuzzy_program.input(1).mf(5).name = ' EminIzq';
+fuzzy_program.input(1).mf(5).type = 'trimf';
+fuzzy_program.input(1).mf(5).params =  [0.25 8 13];
+
+fuzzy_program.input(1).mf(6).name = ' EMedIzq';
+fuzzy_program.input(1).mf(6).type = 'trimf';
+fuzzy_program.input(1).mf(6).params =  [12 17 22];
+
+fuzzy_program.input(1).mf(7).name = 'EMaxIzq';
+fuzzy_program.input(1).mf(7).type = 'trimf';
+fuzzy_program.input(1).mf(7).params = [20 30 30];
+
+%%Creacion de Salida del Led
+
+fuzzy_program.output(1).name = 'ServoPos';
+fuzzy_program.output(1).range = [0 180];
+fuzzy_program.output(1).mf(1).name = 'Subir';
+fuzzy_program.output(1).mf(1).type = 'trimf';
+fuzzy_program.output(1).mf(1).params =  [70 70 95];
+
+fuzzy_program.output(1).mf(2).name = 'SMed';
+fuzzy_program.output(1).mf(2).type = 'trimf';
+fuzzy_program.output(1).mf(2).params = [85 95 105];
+
+fuzzy_program.output(1).mf(3).name = 'SMin';
+fuzzy_program.output(1).mf(3).type = 'trimf';
+fuzzy_program.output(1).mf(3).params =   [105 114 122];
+
+fuzzy_program.output(1).mf(4).name = ' SPoint';
+fuzzy_program.output(1).mf(4).type = 'trimf';
+fuzzy_program.output(1).mf(4).params =  [125 130 135];
+
+fuzzy_program.output(1).mf(5).name = 'BMin';
+fuzzy_program.output(1).mf(5).type = 'trimf';
+fuzzy_program.output(1).mf(5).params =  [138 148 160];
+
+fuzzy_program.output(1).mf(6).name = 'BMed';
+fuzzy_program.output(1).mf(6).type = 'trimf';
+fuzzy_program.output(1).mf(6).params = [145 157 170];
+
+fuzzy_program.output(1).mf(7).name = 'Bajar';
+fuzzy_program.output(1).mf(7).type = 'trimf';
+fuzzy_program.output(1).mf(7).params = [160 180 180];
+
+ruleList = [1 1 1 1 1
+            5 5 1 1 1
+            7 7 1 1 1
+            2 2 1 1 1
+            6 6 1 1 1
+            4 4 1 1 1
+            3 3 1 1 1];
+        
+fuzzy_program=addrule(fuzzy_program,ruleList);
+plotfis(fuzzy_program)
+surfview(fuzzy_program)
+showrule(fuzzy_program)
