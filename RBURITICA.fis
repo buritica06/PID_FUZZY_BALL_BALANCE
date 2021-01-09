@@ -1,0 +1,45 @@
+[System]
+Name='RBURITICA'
+Type='mamdani'
+Version=2.0
+NumInputs=1
+NumOutputs=1
+NumRules=7
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='Error_Entrada'
+Range=[-30 30]
+NumMFs=7
+MF1='Error_Max_Der':'trimf',[-30 -30 -20]
+MF2='Error_Estable':'trimf',[-0.5 0 0.5]
+MF3='Error_Max_Izq':'trimf',[20 30 30]
+MF4='Error_Med_Izq':'trimf',[12 17 22]
+MF5='Error_Med_Der':'trimf',[-22 -17 -12]
+MF6='Error_min_Izq':'trimf',[0.25 8 13]
+MF7='Error_min_Der':'trimf',[-13 -8 -0.25]
+
+[Output1]
+Name='Servo_Pos'
+Range=[83 180]
+NumMFs=7
+MF1='Subiendo':'trimf',[83 83 90]
+MF2='Set_Point':'trimf',[131.5 135.9 140.3]
+MF3='Bajando_Full':'trimf',[162.4 180 180]
+MF4='Bajando_Med':'trimf',[149.1 159.7 171.2]
+MF5='Subiendo_Med':'trimf',[85 95 105]
+MF6='Bajando_Min':'trimf',[143 151.8 162.4]
+MF7='Subiendo_Min':'trimf',[95 105 115]
+
+[Rules]
+1, 1 (1) : 1
+5, 5 (1) : 1
+7, 7 (1) : 1
+2, 2 (1) : 1
+6, 6 (1) : 1
+4, 4 (1) : 1
+3, 3 (1) : 1
